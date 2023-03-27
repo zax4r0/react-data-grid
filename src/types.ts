@@ -125,6 +125,7 @@ export interface CellRendererProps<TRow, TSummaryRow>
   onDoubleClick: RowRendererProps<TRow, TSummaryRow>['onCellDoubleClick'];
   onContextMenu: RowRendererProps<TRow, TSummaryRow>['onCellContextMenu'];
   onRowChange: (column: CalculatedColumn<TRow, TSummaryRow>, newRow: TRow) => void;
+  rangeSelectionMode: boolean;
 }
 
 export type CellEvent<E extends React.SyntheticEvent<HTMLDivElement>> = E & {
@@ -173,6 +174,7 @@ export interface RowRendererProps<TRow, TSummaryRow = unknown>
   row: TRow;
   rowIdx: number;
   selectedCellIdx: number | undefined;
+  selectedCellsRange: { startIdx: number; endIdx: number };
   copiedCellIdx: number | undefined;
   draggedOverCellIdx: number | undefined;
   lastFrozenColumnIndex: number;
@@ -181,8 +183,12 @@ export interface RowRendererProps<TRow, TSummaryRow = unknown>
   height: number;
   selectedCellEditor: ReactElement<EditorProps<TRow>> | undefined;
   selectedCellDragHandle: ReactElement<React.HTMLAttributes<HTMLDivElement>> | undefined;
+  rangeSelectionMode: boolean;
   skipCellFocusRef: MutableRefObject<boolean>;
   onRowChange: (column: CalculatedColumn<TRow, TSummaryRow>, rowIdx: number, newRow: TRow) => void;
+  onCellMouseDown: Maybe<(row: TRow, column: CalculatedColumn<TRow, TSummaryRow>) => void>;
+  onCellMouseUp: Maybe<(row: TRow, column: CalculatedColumn<TRow, TSummaryRow>) => void>;
+  onCellMouseEnter: Maybe<(columnIdx: number) => void>;
   rowClass: Maybe<(row: TRow) => Maybe<string>>;
   setDraggedOverRowIdx: ((overRowIdx: number) => void) | undefined;
   selectCell: (position: Position, enableEditor?: Maybe<boolean>) => void;
@@ -213,6 +219,22 @@ export interface PasteEvent<TRow> {
   sourceRow: TRow;
   targetColumnKey: string;
   targetRow: TRow;
+}
+
+export interface MultiPasteEvent {
+  copiedRange: CellsRange;
+  targetRange: CellsRange;
+}
+
+export interface CellsRange {
+  startRowIdx: number;
+  startColumnIdx: number;
+  endRowIdx: number;
+  endColumnIdx: number;
+}
+
+export interface MultiCopyEvent {
+  cellsRange: CellsRange;
 }
 
 export interface GroupRow<TRow> {

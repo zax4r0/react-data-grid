@@ -190,7 +190,6 @@ export default function AllFeatures({ direction }: Props) {
     ) {
       return targetRow;
     }
-
     return { ...targetRow, [targetColumnKey]: sourceRow[sourceColumnKey as keyof Row] };
   }
 
